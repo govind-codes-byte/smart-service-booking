@@ -1,4 +1,4 @@
-const API_BASE = "";  // Same origin via Flask
+const API_BASE = "https://smart-service-booking-ls7w.onrender.com";  // Same origin via Flask
 
 const api = {
   async request(method, path, body = null, auth = true) {
