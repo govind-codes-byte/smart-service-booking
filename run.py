@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-"""Entry point — run from project root: python run.py"""
 import sys
 import os
 
@@ -9,6 +7,5 @@ from backend.app import app
 from backend.config import Config
 
 if __name__ == "__main__":
-    print(f"\n🚀  ServeNow starting on http://localhost:{Config.PORT}")
-    print(f"📦  Debug mode: {Config.DEBUG}\n")
-    app.run(debug=Config.DEBUG, port=Config.PORT)
+    port = int(os.environ.get("PORT", Config.PORT))
+    app.run(host="0.0.0.0", port=port, debug=Config.DEBUG)
