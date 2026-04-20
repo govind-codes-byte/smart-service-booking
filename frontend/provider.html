@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Provider Dashboard — ServeNow</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-brand" href="/index.html">⚡ Serve<span>Now</span></a>
+  <div class="nav-links" id="nav-links">
+    <a href="/services.html">Services</a>
+    <div id="guest-links" style="display:none"></div>
+    <div id="user-links" style="display:flex;gap:8px;align-items:center">
+      <a href="/provider.html" style="color:var(--amber)" id="provider-link">My Services</a>
+      <a href="/admin.html" id="admin-link" style="display:none">Admin</a>
+      <span style="color:var(--text-muted);font-size:.88rem" id="nav-username"></span>
+      <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div style="padding:0 14px 24px">
+      <div style="font-weight:700;font-size:1rem" id="provider-name">…</div>
+      <div style="font-size:.8rem;color:var(--text-muted)" id="provider-email">…</div>
+      <span class="badge badge-category" style="margin-top:6px">Provider</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-item active" data-tab="services">
+        <span class="icon">🛠️</span> My Services
+      </button>
+      <button class="sidebar-item" data-tab="bookings">
+        <span class="icon">📋</span> Booking Requests
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <!-- Services Tab -->
+    <div class="tab-panel" id="tab-services">
+      <div class="section-header">
+        <h2>My Services</h2>
+        <button class="btn btn-primary" id="add-service-btn">+ Add Service</button>
+      </div>
+      <div id="services-list"></div>
+    </div>
+
+    <!-- Bookings Tab -->
+    <div class="tab-panel" id="tab-bookings" style="display:none">
+      <div class="section-header">
+        <h2>Booking Requests</h2>
+      </div>
+      <div id="bookings-list"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Add/Edit Service Modal -->
+<div class="modal-overlay" id="service-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="service-modal-title">Add New Service</h3>
+      <button class="modal-close" onclick="closeModal('service-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label>Service Title</label>
+      <input class="form-control" type="text" id="svc-title" placeholder="e.g. Home Electrical Wiring"/>
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <select class="form-control" id="svc-category">
+        <option value="">Loading…</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea class="form-control" id="svc-desc" rows="3" placeholder="Describe what you offer…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Price per hour (₹)</label>
+      <input class="form-control" type="number" id="svc-price" min="1" placeholder="e.g. 500"/>
+    </div>
+    <button class="btn btn-primary btn-full" id="save-service-btn">Save Service</button>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script src="/js/provider.js"></script>
+</body>
+</html>

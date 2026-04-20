@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Services — ServeNow</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-brand" href="/index.html">⚡ Serve<span>Now</span></a>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="nav-links">
+    <a href="/services.html" style="color:var(--amber)">Services</a>
+    <div id="guest-links" style="display:flex;gap:8px;align-items:center">
+      <a href="/login.html">Sign In</a>
+      <a href="/register.html" class="btn btn-primary btn-sm">Get Started</a>
+    </div>
+    <div id="user-links" style="display:none;gap:8px;align-items:center">
+      <a href="/dashboard.html" id="dashboard-link">Dashboard</a>
+      <a href="/provider.html" id="provider-link" style="display:none">My Services</a>
+      <a href="/admin.html" id="admin-link" style="display:none">Admin</a>
+      <span style="color:var(--text-muted);font-size:.88rem" id="nav-username"></span>
+      <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>Browse Services</h1>
+  <p>Find skilled professionals for any task</p>
+</div>
+
+<div class="section">
+  <!-- Search -->
+  <div class="search-bar" style="margin-bottom:24px;max-width:500px">
+    <input type="text" id="search-input" placeholder="Search services…"/>
+    <button onclick="renderServices()">Search</button>
+  </div>
+
+  <!-- Category pills -->
+  <div class="category-pills" id="category-pills">
+    <div class="spinner" style="width:24px;height:24px;border-width:2px"></div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-3" id="services-grid">
+    <div class="loading-overlay"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<!-- Service Detail Modal -->
+<div class="modal-overlay" id="service-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="service-icon" id="modal-icon">🛠️</div>
+        <div>
+          <h3 id="modal-title"></h3>
+          <span class="badge badge-category" id="modal-category"></span>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('service-modal')">✕</button>
+    </div>
+    <p id="modal-desc" style="color:var(--text-muted);margin-bottom:16px;font-size:.92rem"></p>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span class="service-price" id="modal-price"></span>
+      <span style="font-size:.88rem;color:var(--text-muted)">👤 <span id="modal-provider"></span></span>
+    </div>
+    <div id="modal-rating" style="margin-bottom:20px;font-size:.9rem"></div>
+    <hr class="divider"/>
+    <h4 style="margin-bottom:12px">Reviews</h4>
+    <div id="modal-reviews" style="max-height:200px;overflow-y:auto"></div>
+    <button id="modal-book-btn" class="btn btn-primary btn-full" style="margin-top:20px;display:none">Book This Service</button>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3>Book Service</h3>
+        <p id="booking-service-title" style="color:var(--amber);font-weight:600;margin-top:4px"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal('booking-modal')">✕</button>
+    </div>
+    <input type="hidden" id="booking-service-id"/>
+    <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:16px">
+      Price: <strong id="booking-price" style="color:var(--amber)"></strong>
+    </p>
+    <div class="form-group">
+      <label>Date</label>
+      <input class="form-control" type="date" id="booking-date" required/>
+    </div>
+    <div class="form-group">
+      <label>Time</label>
+      <input class="form-control" type="time" id="booking-time" required/>
+    </div>
+    <div class="form-group">
+      <label>Service Address</label>
+      <textarea class="form-control" id="booking-address" rows="2" placeholder="Enter your full address…"></textarea>
+    </div>
+    <button class="btn btn-primary btn-full" id="confirm-booking-btn">Confirm Booking</button>
+  </div>
+</div>
+
+<footer>
+  <div class="brand">⚡ Serve<span>Now</span></div>
+  <p>© 2025 ServeNow. All rights reserved.</p>
+</footer>
+
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script src="/js/booking.js"></script>
+<script src="/js/services.js"></script>
+<script>
+  // Read URL params
+  document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("search")) document.getElementById("search-input").value = params.get("search");
+    if (params.get("category")) {
+      // Will be picked up after categories load
+      window.__forceCategory = params.get("category");
+    }
+  });
+</script>
+</body>
+</html>

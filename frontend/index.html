@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ServeNow — Smart Service Booking</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="nav-brand" href="/index.html">⚡ Serve<span>Now</span></a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
+    <a href="/services.html">Services</a>
+    <div id="guest-links" style="display:flex;gap:8px;align-items:center">
+      <a href="/login.html">Sign In</a>
+      <a href="/register.html" class="btn-primary btn btn-sm">Get Started</a>
+    </div>
+    <div id="user-links" style="display:none;gap:8px;align-items:center">
+      <a href="/dashboard.html" id="dashboard-link">Dashboard</a>
+      <a href="/provider.html" id="provider-link" style="display:none">My Services</a>
+      <a href="/admin.html" id="admin-link" style="display:none">Admin</a>
+      <span style="color:var(--text-muted);font-size:.88rem" id="nav-username"></span>
+      <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🏆 Trusted by 10,000+ customers</div>
+  <h1>Book <em>Any Service</em>,<br/>Anytime, Anywhere</h1>
+  <p>Connect with skilled professionals for home services, repairs, tutoring, and more — instantly.</p>
+  <div class="search-bar">
+    <input type="text" id="hero-search" placeholder="Search services — electrician, plumber, tutor…"/>
+    <button onclick="heroSearch()">Search</button>
+  </div>
+  <div class="hero-actions">
+    <a href="/services.html" class="btn btn-primary">Browse All Services</a>
+    <a href="/register.html" class="btn btn-outline">Become a Provider</a>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section" style="padding-top:20px">
+  <div class="section-header">
+    <div>
+      <div class="section-tag">Popular Categories</div>
+      <h2>What do you need help with?</h2>
+    </div>
+  </div>
+  <div class="grid-4" id="categories-grid">
+    <div class="loading-overlay"><div class="spinner"></div></div>
+  </div>
+</section>
+
+<!-- FEATURED SERVICES -->
+<section class="section" style="background:var(--navy-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="section-header">
+    <div>
+      <div class="section-tag">Featured</div>
+      <h2>Top-Rated Services</h2>
+    </div>
+    <a href="/services.html" class="btn btn-outline btn-sm">View All →</a>
+  </div>
+  <div class="grid-3" id="featured-grid">
+    <div class="loading-overlay"><div class="spinner"></div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div style="text-align:center;margin-bottom:48px">
+    <div class="section-tag">How It Works</div>
+    <h2>Three simple steps</h2>
+  </div>
+  <div class="grid-3">
+    <div class="card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:16px">🔍</div>
+      <h3>1. Search</h3>
+      <p style="color:var(--text-muted);margin-top:8px">Browse services by category or search for exactly what you need.</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:16px">📅</div>
+      <h3>2. Book</h3>
+      <p style="color:var(--text-muted);margin-top:8px">Pick your date, time, and address. Confirm in seconds.</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:16px">⭐</div>
+      <h3>3. Review</h3>
+      <p style="color:var(--text-muted);margin-top:8px">After service, share your experience to help the community.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="brand">⚡ Serve<span>Now</span></div>
+  <p>Connecting people with trusted service professionals.</p>
+  <p style="margin-top:12px">© 2025 ServeNow. All rights reserved.</p>
+</footer>
+
+<div id="toast-container"></div>
+
+<script src="/js/api.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    updateNavbar();
+    document.getElementById("hamburger")?.addEventListener("click", () =>
+      document.getElementById("nav-links")?.classList.toggle("open"));
+    document.getElementById("logout-btn")?.addEventListener("click", logout);
+
+    // Load categories
+    try {
+      const data = await api.get("/api/services/categories", false);
+      const icons = CATEGORY_ICONS;
+      document.getElementById("categories-grid").innerHTML = data.categories.map(c => `
+        <a href="/services.html?category=${encodeURIComponent(c)}" class="card" style="text-align:center;cursor:pointer;text-decoration:none">
+          <div style="font-size:2.2rem;margin-bottom:10px">${icons[c]||"🛠️"}</div>
+          <div style="font-weight:600;font-size:.95rem">${c}</div>
+        </a>`).join("");
+    } catch {}
+
+    // Load featured services (top rated)
+    try {
+      const services = await api.get("/api/services", false);
+      const top = services.sort((a,b) => (b.rating||0)-(a.rating||0)).slice(0,6);
+      if (!top.length) {
+        document.getElementById("featured-grid").innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1">
+            <div class="icon">🔍</div><h3>No services yet</h3>
+            <p><a href="/register.html">Register as a provider</a> to add the first service!</p>
+          </div>`;
+        return;
+      }
+      document.getElementById("featured-grid").innerHTML = top.map(s => `
+        <a href="/services.html" class="service-card" style="text-decoration:none">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="service-icon">${CATEGORY_ICONS[s.category]||"🛠️"}</div>
+            <span class="badge badge-category">${s.category}</span>
+          </div>
+          <div class="service-title">${s.title}</div>
+          <div class="service-desc">${s.description.slice(0,90)}…</div>
+          <div class="service-meta">
+            <span class="service-price">₹${s.price}/hr</span>
+            <span class="service-rating"><span class="stars">★</span> ${s.rating ? s.rating.toFixed(1) : "New"}</span>
+          </div>
+          <div class="service-provider">👤 ${s.providerName}</div>
+        </a>`).join("");
+    } catch {}
+  });
+
+  function heroSearch() {
+    const q = document.getElementById("hero-search").value.trim();
+    if (q) window.location.href = `/services.html?search=${encodeURIComponent(q)}`;
+    else window.location.href = "/services.html";
+  }
+
+  document.getElementById("hero-search")?.addEventListener("keydown", e => {
+    if (e.key === "Enter") heroSearch();
+  });
+</script>
+</body>
+</html>

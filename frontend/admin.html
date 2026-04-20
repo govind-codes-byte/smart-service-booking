@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Panel — ServeNow</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-brand" href="/index.html">⚡ Serve<span>Now</span></a>
+  <div class="nav-links" id="nav-links">
+    <div id="guest-links" style="display:none"></div>
+    <div id="user-links" style="display:flex;gap:8px;align-items:center">
+      <a href="/admin.html" style="color:var(--amber)" id="admin-link">Admin Panel</a>
+      <span style="color:var(--text-muted);font-size:.88rem" id="nav-username"></span>
+      <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div style="padding:0 14px 24px">
+      <div style="font-weight:700;font-size:1rem" id="admin-name">Admin</div>
+      <span class="badge" style="background:rgba(239,68,68,.15);color:var(--danger);margin-top:6px">Administrator</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-item active" data-tab="overview">
+        <span class="icon">📊</span> Overview
+      </button>
+      <button class="sidebar-item" data-tab="users">
+        <span class="icon">👥</span> Users
+      </button>
+      <button class="sidebar-item" data-tab="services">
+        <span class="icon">🛠️</span> Services
+      </button>
+      <button class="sidebar-item" data-tab="bookings">
+        <span class="icon">📋</span> Bookings
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <!-- Overview Tab -->
+    <div class="tab-panel" id="tab-overview">
+      <h2 style="margin-bottom:24px">Platform Overview</h2>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-users">—</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-services">—</div>
+          <div class="stat-label">Active Services</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-bookings">—</div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-reviews">—</div>
+          <div class="stat-label">Reviews</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:24px">
+        <h3 style="margin-bottom:8px">Quick Links</h3>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+          <button class="btn btn-outline" onclick="setTab('users')">Manage Users →</button>
+          <button class="btn btn-outline" onclick="setTab('services')">Manage Services →</button>
+          <button class="btn btn-outline" onclick="setTab('bookings')">View Bookings →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="tab-panel" id="tab-users" style="display:none">
+      <h2 style="margin-bottom:24px">All Users</h2>
+      <div id="users-list"></div>
+    </div>
+
+    <!-- Services Tab -->
+    <div class="tab-panel" id="tab-services" style="display:none">
+      <h2 style="margin-bottom:24px">All Services</h2>
+      <div id="services-list"></div>
+    </div>
+
+    <!-- Bookings Tab -->
+    <div class="tab-panel" id="tab-bookings" style="display:none">
+      <h2 style="margin-bottom:24px">All Bookings</h2>
+      <div id="bookings-list"></div>
+    </div>
+  </main>
+</div>
+
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

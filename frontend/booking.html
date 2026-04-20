@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Book a Service — ServeNow</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-brand" href="/index.html">⚡ Serve<span>Now</span></a>
+  <div class="nav-links" id="nav-links">
+    <a href="/services.html">Services</a>
+    <div id="guest-links" style="display:flex;gap:8px;align-items:center">
+      <a href="/login.html">Sign In</a>
+      <a href="/register.html" class="btn btn-primary btn-sm">Get Started</a>
+    </div>
+    <div id="user-links" style="display:none;gap:8px;align-items:center">
+      <a href="/dashboard.html" id="dashboard-link">Dashboard</a>
+      <a href="/provider.html" id="provider-link" style="display:none">My Services</a>
+      <a href="/admin.html" id="admin-link" style="display:none">Admin</a>
+      <span style="color:var(--text-muted);font-size:.88rem" id="nav-username"></span>
+      <button id="logout-btn" class="btn btn-outline btn-sm">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="section" style="max-width:560px;margin:0 auto">
+  <div style="margin-bottom:24px">
+    <a href="/services.html" style="color:var(--text-muted);font-size:.88rem">← Back to Services</a>
+  </div>
+  <h2 style="margin-bottom:6px">Book a Service</h2>
+  <p style="color:var(--text-muted);margin-bottom:28px" id="page-service-title"></p>
+
+  <div class="card">
+    <input type="hidden" id="booking-service-id"/>
+    <div class="form-group">
+      <label>Date</label>
+      <input class="form-control" type="date" id="booking-date" required/>
+    </div>
+    <div class="form-group">
+      <label>Time</label>
+      <input class="form-control" type="time" id="booking-time" required/>
+    </div>
+    <div class="form-group">
+      <label>Service Address</label>
+      <textarea class="form-control" id="booking-address" rows="3" placeholder="Full address where service is needed…"></textarea>
+    </div>
+    <button class="btn btn-primary btn-full" id="confirm-booking-btn">Confirm Booking</button>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="/js/api.js"></script>
+<script src="/js/booking.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    updateNavbar();
+    document.getElementById("logout-btn")?.addEventListener("click", logout);
+    const params = new URLSearchParams(window.location.search);
+    const sid = params.get("serviceId");
+    const title = params.get("title");
+    if (sid) document.getElementById("booking-service-id").value = sid;
+    if (title) document.getElementById("page-service-title").textContent = title;
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("booking-date").min = today;
+
+    document.getElementById("confirm-booking-btn").addEventListener("click", async () => {
+      const serviceId = document.getElementById("booking-service-id").value;
+      const date = document.getElementById("booking-date").value;
+      const time = document.getElementById("booking-time").value;
+      const address = document.getElementById("booking-address").value.trim();
+      const btn = document.getElementById("confirm-booking-btn");
+      if (!date || !time || !address) { showToast("Fill in all fields", "error"); return; }
+      if (!serviceId) { showToast("No service selected", "error"); return; }
+      btn.disabled = true; btn.textContent = "Booking…";
+      try {
+        await api.post("/api/book", { serviceId, date, time, address });
+        showToast("Booking confirmed! 🎉", "success");
+        setTimeout(() => window.location.href = "/dashboard.html", 1200);
+      } catch (err) {
+        showToast(err.message, "error");
+        btn.disabled = false; btn.textContent = "Confirm Booking";
+      }
+    });
+  });
+</script>
+</body>
+</html>
